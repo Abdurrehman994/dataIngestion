@@ -2,7 +2,7 @@ import requests
 import os
 from pprint import pprint
 
-token = os.getenv('GITHUB_TOKEN', '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')
+token = os.getenv('GITHUB_TOKEN', '')
 owner = "freeCodeCamp"
 repo = "freeCodeCamp"
 query_url_issues = f"https://api.github.com/repos/{owner}/{repo}/issues"
