@@ -18,9 +18,9 @@ headers = {'Authorization': f'token {token}'}
 
 # print('''============Issues==============''')
 url = f"https://api.github.com/repos/{owner}/{repo}/issues?simple=yes&per_page=100&page=1"
-res=requests.get(url,headers={"Authorization": token})
+res=requests.get(url,headers={"Authorization": token}, timeout=60)
 data = f"https://api.github.com/repos/{owner}/{repo}"
-data=requests.get(data,headers={"Authorization": token})
+data=requests.get(data,headers={"Authorization": token}, timeout=60)
 data = data.json()
 # pprint(data)
 
@@ -30,7 +30,7 @@ repository_id = data['id']
 repos=res.json()
 # pprint(repos)
 while 'next' in res.links.keys():
-  res=requests.get(res.links['next']['url'],headers={"Authorization": token})
+  res=requests.get(res.links['next']['url'],headers={"Authorization": token}, timeout=60)
   repos.extend(res.json())
 pprint(len(repos))
 
@@ -102,7 +102,7 @@ for i in range(len(repos)):
 # cur.close()
 # conn.close()
     event_url = repos[i]["events_url"]
-    w = requests.get(event_url)
+    w = requests.get(event_url, timeout=60)
     time.sleep(5)
     w = w.json()
     print(len(w))
