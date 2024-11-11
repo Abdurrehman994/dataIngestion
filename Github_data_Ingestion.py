@@ -1,8 +1,9 @@
-import requests
 import os
 from pprint import pprint
 import psycopg2
 import time
+from security import safe_requests
+
 conn = psycopg2.connect("""dbname=your_database_name user=postgres password=database_password""")
 cur = conn.cursor()
 token = os.getenv('GITHUB_TOKEN', 'Your token key')
@@ -12,9 +13,9 @@ repo = "freeCodeCamp"
 
 headers = {'Authorization': f'token {token}'}
 url = f"https://api.github.com/repos/{owner}/{repo}/issues?simple=yes&per_page=100&page=1"
-res=requests.get(url,headers={"Authorization": token})
+res=safe_requests.get(url,headers={"Authorization": token})
 data = f"https://api.github.com/repos/{owner}/{repo}"
-data=requests.get(data,headers={"Authorization": token})
+data=safe_requests.get(data,headers={"Authorization": token})
 data = data.json()
 # pprint(data)
 
@@ -24,7 +25,7 @@ repository_id = data['id']
 repos=res.json()
 # pprint(repos)
 while 'next' in res.links.keys():
-  res=requests.get(res.links['next']['url'],headers={"Authorization": token})
+  res=safe_requests.get(res.links['next']['url'],headers={"Authorization": token})
   repos.extend(res.json())
 pprint(len(repos))
 
@@ -44,7 +45,7 @@ developer_url=data["owner"]["html_url"]
 # branches and commits
 url3 = data["branches_url"]
 url3 = str(url3).split('{')[0]
-w3 = requests.get(url3)
+w3 = safe_requests.get(url3)
 w3 = w3.json()
 Sixth_Table = []
 for branch in w3:
@@ -53,7 +54,7 @@ for branch in w3:
     print('branch',branch_name)
     commits_url = branch["commit"]["url"]
     # print('commits_url', commits_url)
-    w = requests.get(commits_url)
+    w = safe_requests.get(commits_url)
     w = w.json()
     time.sleep(5)
     commit_id = w['sha']

@@ -1,8 +1,9 @@
-import requests
 import os
 from pprint import pprint
 import psycopg2
 import time
+from security import safe_requests
+
 conn = psycopg2.connect("""dbname=demo user=postgres password=postgre123""")
 cur = conn.cursor()
 token = os.getenv('GITHUB_TOKEN', 'your token')
@@ -18,9 +19,9 @@ headers = {'Authorization': f'token {token}'}
 
 # print('''============Issues==============''')
 url = f"https://api.github.com/repos/{owner}/{repo}/issues?simple=yes&per_page=100&page=1"
-res=requests.get(url,headers={"Authorization": token})
+res=safe_requests.get(url,headers={"Authorization": token})
 data = f"https://api.github.com/repos/{owner}/{repo}"
-data=requests.get(data,headers={"Authorization": token})
+data=safe_requests.get(data,headers={"Authorization": token})
 data = data.json()
 # pprint(data)
 
@@ -30,7 +31,7 @@ repository_id = data['id']
 repos=res.json()
 # pprint(repos)
 while 'next' in res.links.keys():
-  res=requests.get(res.links['next']['url'],headers={"Authorization": token})
+  res=safe_requests.get(res.links['next']['url'],headers={"Authorization": token})
   repos.extend(res.json())
 pprint(len(repos))
 
@@ -102,7 +103,7 @@ for i in range(len(repos)):
 # cur.close()
 # conn.close()
     event_url = repos[i]["events_url"]
-    w = requests.get(event_url)
+    w = safe_requests.get(event_url)
     time.sleep(5)
     w = w.json()
     print(len(w))
