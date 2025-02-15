@@ -1,6 +1,6 @@
-import requests
 import os
 from pprint import pprint
+from security import safe_requests
 
 token = os.getenv('GITHUB_TOKEN', '')
 owner = "freeCodeCamp"
@@ -12,9 +12,9 @@ params = {
     "state": "open",
 }
 headers = {'Authorization': f'token {token}'}
-r_issues = requests.get(query_url_issues, headers=headers, params=params)
-r_branches = requests.get(query_url_branches, headers=headers, params=params)
-r_commits = requests.get(query_url_commits, headers=headers, params=params)
+r_issues = safe_requests.get(query_url_issues, headers=headers, params=params)
+r_branches = safe_requests.get(query_url_branches, headers=headers, params=params)
+r_commits = safe_requests.get(query_url_commits, headers=headers, params=params)
 
 print('''============Issues==============''')
 
@@ -29,7 +29,7 @@ print('closed at:',r_issues.json()[0]['closed_at'])
 
 print("==========issue event=====")
 url=r_issues.json()[0]["events_url"]
-w=requests.get(url)
+w=safe_requests.get(url)
 # pprint(w.json())
 print("issue_event_id:",w.json()[0]["id"])
 #add repo id
@@ -58,14 +58,14 @@ print('github_user_id:',r_issues.json()[0]["user"]["node_id"])
 print("==============branch========")
 url3=r_branches.json()[0]["commit"]["url"]
 # pprint(url3)
-w3=requests.get(url3)
+w3=safe_requests.get(url3)
 print('branch_id:',w3.json()["node_id"])
 #add repo id
 print('link:',w3.json())
 print('branch name:',r_branches.json()[0]["name"])
 print("=========commit========")
 url4=r_commits.json()[0]["url"]
-w4=requests.get(url4)
+w4=safe_requests.get(url4)
 print('commit_id:',w4.json()["files"][0]["sha"])
 print('branch_id:',w3.json()["node_id"])
 print('url:',r_commits.json()[0]["commit"]["url"])
