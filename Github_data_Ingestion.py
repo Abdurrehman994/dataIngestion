@@ -12,9 +12,9 @@ repo = "freeCodeCamp"
 
 headers = {'Authorization': f'token {token}'}
 url = f"https://api.github.com/repos/{owner}/{repo}/issues?simple=yes&per_page=100&page=1"
-res=requests.get(url,headers={"Authorization": token})
+res=requests.get(url,headers={"Authorization": token}, timeout=60)
 data = f"https://api.github.com/repos/{owner}/{repo}"
-data=requests.get(data,headers={"Authorization": token})
+data=requests.get(data,headers={"Authorization": token}, timeout=60)
 data = data.json()
 # pprint(data)
 
@@ -24,7 +24,7 @@ repository_id = data['id']
 repos=res.json()
 # pprint(repos)
 while 'next' in res.links.keys():
-  res=requests.get(res.links['next']['url'],headers={"Authorization": token})
+  res=requests.get(res.links['next']['url'],headers={"Authorization": token}, timeout=60)
   repos.extend(res.json())
 pprint(len(repos))
 
@@ -44,7 +44,7 @@ developer_url=data["owner"]["html_url"]
 # branches and commits
 url3 = data["branches_url"]
 url3 = str(url3).split('{')[0]
-w3 = requests.get(url3)
+w3 = requests.get(url3, timeout=60)
 w3 = w3.json()
 Sixth_Table = []
 for branch in w3:
@@ -53,7 +53,7 @@ for branch in w3:
     print('branch',branch_name)
     commits_url = branch["commit"]["url"]
     # print('commits_url', commits_url)
-    w = requests.get(commits_url)
+    w = requests.get(commits_url, timeout=60)
     w = w.json()
     time.sleep(5)
     commit_id = w['sha']
